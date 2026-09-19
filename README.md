@@ -1,4 +1,4 @@
-﻿# Microproyecto 2: Implementación de Clúster Kubernetes en Azure (AKS)
+# Microproyecto 2: Implementación de Clúster Kubernetes en Azure (AKS)
 **Asignatura:** Computación en la Nube  
 **Universidad Autónoma de Occidente (UAO)**  
 **Facultad de Ingeniería**
@@ -6,9 +6,9 @@
 ---
 
 ## 👥 Integrantes del Equipo
-* José Luque (`jose.luque@uao.edu.co`)
-* [Nombre Compañero 2]
-* [Nombre Compañero 3]
+* Julio Cesar Rosero Porras
+* Jose Fernando Luque Cajiao (`jose.luque@uao.edu.co`)
+* Karoll Dahian Ramirez Marulanda
 
 ---
 

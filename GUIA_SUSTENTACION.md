@@ -1,7 +1,10 @@
 # Evidencia y Guía de Sustentación - Microproyecto 2 (AKS)
 
 **Asignatura:** Computación en la Nube  
-**Estudiante:** José Luque (`jose.luque@uao.edu.co`)  
+**Integrantes:**  
+* Julio Cesar Rosero Porras  
+* Jose Fernando Luque Cajiao (`jose.luque@uao.edu.co`)  
+* Karoll Dahian Ramirez Marulanda  
 **Institución:** Universidad Autónoma de Occidente  
 **Suscripción:** Azure for Students (`c7fc4381-3a81-4d53-8d8d-c69a2fafe363`)  
 **Grupo de Recursos:** `rg-microproyecto2` (Región: `westus`)  
