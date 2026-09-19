@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador de Imágenes CIFAR-10 en AKS</title>
+    <style>
+        :root {
+            --primary: #0078d4;
+            --primary-hover: #005a9e;
+            --bg: #f3f2f1;
+            --card-bg: #ffffff;
+            --text: #323130;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        .badge {
+            background: #e1dfdd;
+            color: #0078d4;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        h1 {
+            margin: 15px 0 10px;
+            font-size: 24px;
+            color: #1b1a19;
+        }
+        p.subtitle {
+            color: #605e5c;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .dropzone {
+            border: 2px dashed #8a8886;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+            background: #faf9f8;
+        }
+        .dropzone:hover {
+            border-color: var(--primary);
+            background: #eff6fc;
+        }
+        #preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: var(--primary-hover);
+        }
+        button:disabled {
+            background: #c8c6c4;
+            cursor: not-allowed;
+        }
+        #result-box {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 600;
+            font-size: 16px;
+            background: #dff6dd;
+            color: #107c10;
+            border: 1px solid #92c353;
+        }
+        .classes-list {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #edebe9;
+            font-size: 12px;
+            color: #605e5c;
+        }
+        .classes-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .classes-tags span {
+            background: #f3f2f1;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="badge">Azure Kubernetes Service (AKS)</span>
+        <h1>Clasificador Deep Learning CIFAR-10</h1>
+        <p class="subtitle">Microproyecto 2 - Computación en la Nube · Modelo ResNet-20</p>
+        
+        <form id="upload-form">
+            <div class="dropzone" onclick="document.getElementById('file-input').click()">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#605e5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <p style="margin: 8px 0 4px; font-weight: 600;">Haz clic o arrastra una imagen aquí</p>
+                <p style="margin: 0; font-size: 12px; color: #8a8886;">Formatos soportados: JPG, JPEG, PNG</p>
+                <input type="file" id="file-input" name="img" accept="image/*" style="display:none;" onchange="handleFile(this.files)">
+                <img id="preview" alt="Vista previa">
+            </div>
+
+            <button type="submit" id="submit-btn" disabled>Clasificar Imagen</button>
+        </form>
+
+        <div id="result-box"></div>
+
+        <div class="classes-list">
+            <strong>10 Clases Reconocidas:</strong>
+            <div class="classes-tags">
+                <span>airplane</span>
+                <span>automobile</span>
+                <span>bird</span>
+                <span>cat</span>
+                <span>deer</span>
+                <span>dog</span>
+                <span>frog</span>
+                <span>horse</span>
+                <span>ship</span>
+                <span>truck</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const preview = document.getElementById('preview');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultBox = document.getElementById('result-box');
+        const form = document.getElementById('upload-form');
+
+        function handleFile(files) {
+            if (files && files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    submitBtn.disabled = false;
+                    resultBox.style.display = 'none';
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!fileInput.files[0]) return;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Procesando inferencia...';
+            resultBox.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('img', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const text = await response.text();
+                resultBox.textContent = text;
+                resultBox.style.display = 'block';
+            } catch (err) {
+                resultBox.textContent = 'Error al clasificar: ' + err.message;
+                resultBox.style.display = 'block';
+                resultBox.style.background = '#fde7e9';
+                resultBox.style.color = '#a80000';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Clasificar Imagen';
+            }
+        });
+    </script>
+</body>
+</html>

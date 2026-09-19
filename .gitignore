@@ -1,0 +1,12 @@
+﻿*.pem
+*.key
+*.doc
+*.pdf
+*.zip
+*.log
+__pycache__/
+.vscode/
+.system_generated/
+extract_doc.py
+2025-03 Microproyecto2.txt
+2026-01 Practica Kubernetes-minikube.txt

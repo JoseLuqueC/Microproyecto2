@@ -1,0 +1,6 @@
+﻿flask>=2.0.0
+Pillow>=8.0.0
+numpy<1.24.0
+requests
+gluoncv==0.8.0
+mxnet==1.7.0.post2
